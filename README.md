@@ -20,10 +20,10 @@ Compare two implementations:
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Start development server
-npm start
+pnpm start
 ```
 
 Open [http://localhost:4200](http://localhost:4200)
@@ -32,10 +32,10 @@ Open [http://localhost:4200](http://localhost:4200)
 
 | Command | Description |
 |---------|-------------|
-| `npm start` | Development server (localhost:4200) |
-| `npm run build` | Production build |
-| `npm run test:unit` | Run unit tests (Vitest) |
-| `npm run test:e2e` | Run E2E tests (Playwright) |
+| `pnpm start` | Development server (localhost:4200) |
+| `pnpm run build` | Production build |
+| `pnpm run test:unit` | Run unit tests (Vitest) |
+| `pnpm run test:e2e` | Run E2E tests (Playwright) |
 
 ## Tech Stack
 

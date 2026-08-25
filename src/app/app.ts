@@ -88,7 +88,12 @@ type View = 'benchmark' | 'dashboard' | 'techniques';
         -webkit-backdrop-filter: blur(14px);
         border-bottom: 1px solid var(--line);
       }
-      :root[data-theme='light'] .topbar { background: rgba(246, 248, 251, 0.85); }
+      :root[data-theme='light'] .topbar {
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow:
+          0 1px 0 var(--line),
+          0 6px 20px -10px rgba(15, 23, 42, 0.12);
+      }
 
       .topbar-inner {
         display: flex;

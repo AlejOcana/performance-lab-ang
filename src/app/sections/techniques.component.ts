@@ -96,15 +96,15 @@ export class Techniques {
       problem:
         'Rendering 50,000 table rows creates ~500,000 DOM nodes. The tab freezes for seconds and scrolling drops to single-digit FPS.',
       solution:
-        'Angular CDK renders only the rows visible in the viewport (plus a small buffer). The scroll container is fixed-height; rows are recycled as you scroll.',
-      code: `<cdk-virtual-scroll-viewport [itemSize]="44">
-  <table>
-    <tbody>
-      <tr *cdkVirtualFor="let t of rows(); track t.id">…</tr>
-    </tbody>
-  </table>
-</cdk-virtual-scroll-viewport>`,
-      impact: 'Benchmark: DOM nodes drop from hundreds of thousands to a few hundred. Scroll stays at 60 fps.',
+        'Render only the rows visible in the viewport (plus a small buffer) and recycle as you scroll. This lab implements it in ~30 lines of signal-driven code; in production Angular apps, Angular CDK\'s cdkVirtualFor is the drop-in answer.',
+      code: `readonly scrollTop = signal(0);
+
+readonly visibleRows = computed(() => {
+  const start = Math.max(0,
+    Math.floor(this.scrollTop() / ROW_HEIGHT) - BUFFER);
+  return this.rows().slice(start, start + VISIBLE_COUNT);
+});`,
+      impact: 'Benchmark: DOM nodes drop from hundreds of thousands to ~20. Scroll stays at 60 fps.',
     },
     {
       title: '@defer — lazy loading',

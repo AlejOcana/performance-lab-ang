@@ -1,12 +1,12 @@
 ﻿[33m>[39m Building...
 [32mÔêÜ[39m Building...
 [1mInitial chunk files[22m[2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
-[32mmain-KVQOAIGB.js[39m   [2m | [22m[2mmain[22m         [2m | [22m[36m243.19 kB[39m[2m | [22m               [36m67.77 kB[39m
+[32mmain-R37PNC4H.js[39m   [2m | [22m[2mmain[22m         [2m | [22m[36m177.43 kB[39m[2m | [22m               [36m51.44 kB[39m
 [32mstyles-FIBAMVXB.css[39m[2m | [22m[2mstyles[22m       [2m | [22m  [36m2.14 kB[39m[2m | [22m              [36m853 bytes[39m
 
-[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m245.33 kB[22m[2m | [22m               [1m68.62 kB[22m
+[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m179.57 kB[22m[2m | [22m               [1m52.30 kB[22m
 
-Application bundle generation complete. [1.596 seconds] - 2026-08-25T00:09:41.269Z
+Application bundle generation complete. [1.443 seconds] - 2026-08-25T08:25:16.488Z
 
 Output location: F:\Development\OpenCode\performance-lab\dist\performance-lab
 

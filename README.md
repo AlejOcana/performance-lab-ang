@@ -35,7 +35,7 @@ Every optimization applied in the lab, each with the real code from this reposit
 ## Engineering highlights
 
 - **Angular 21, zoneless** — no Zone.js; signals drive exact, per-consumer updates
-- **Virtual scrolling** with Angular CDK — 50K rows at interactive framerates
+- **Hand-rolled virtual scrolling** — ~30 lines of signal-driven windowing; renders ~20 rows out of 50K. (Angular CDK's `cdkVirtualFor` is the production drop-in — this lab implements the concept from first principles so you can read it.)
 - **`@defer` lazy loading** and the new control flow (`@if`/`@for`/`@switch`) throughout
 - **Seeded deterministic data** — `mulberry32` PRNG, so every benchmark run is reproducible
 - **Hand-rolled SVG charts** — a line, a bar and a donut in ~150 lines instead of a 70 KB chart library. A performance lab that ships a heavy chart library would be a contradiction

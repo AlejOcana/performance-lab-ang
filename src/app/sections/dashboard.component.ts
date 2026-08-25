@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DashboardStore } from '../core/dashboard.store';
 import type { FilterState, Transaction, Version } from '../core/models';
 
@@ -16,7 +15,7 @@ const PALETTE = ['#22d3ee', '#5eead4', '#818cf8', '#f472b6', '#fbbf24', '#4ade80
 @Component({
   selector: 'pl-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, ScrollingModule],
+  imports: [DecimalPipe],
   template: `
     <div class="page-head">
       <h1>Dashboard</h1>
@@ -139,32 +138,31 @@ const PALETTE = ['#22d3ee', '#5eead4', '#818cf8', '#f472b6', '#fbbf24', '#4ade80
       </div>
 
       @if (version() === 'optimized') {
-        <cdk-virtual-scroll-viewport
-          class="table-viewport"
-          [itemSize]="rowHeight"
-          [maxBufferPx]="200"
-          [minBufferPx]="100"
-        >
-          <table class="tx-table">
-            <thead class="tx-head">
-              <tr>
-                <th>ID</th><th>Date</th><th>Customer</th><th>Description</th>
-                <th>Amount</th><th>Status</th><th>Category</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *cdkVirtualFor="let t of store.filtered(); track t.id" [style.height.px]="rowHeight">
-                <td class="mono">{{ t.id }}</td>
-                <td class="dim">{{ t.date }}</td>
-                <td class="strong">{{ t.customer }}</td>
-                <td class="dim desc">{{ t.description }}</td>
-                <td class="mono amount">{{ t.amount | number: '1.2-2' }} €</td>
-                <td><span class="status" [style.color]="statusColor(t.status)">● {{ t.status }}</span></td>
-                <td class="dim cap">{{ t.category }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </cdk-virtual-scroll-viewport>
+        <div class="table-viewport" (scroll)="onTableScroll($event)">
+          <div [style.height.px]="totalHeight()">
+            <table class="tx-table" [style.margin-top.px]="windowOffset()">
+              <thead class="tx-head">
+                <tr>
+                  <th>ID</th><th>Date</th><th>Customer</th><th>Description</th>
+                  <th>Amount</th><th>Status</th><th>Category</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (t of visibleRows(); track t.id) {
+                  <tr [style.height.px]="rowHeight">
+                    <td class="mono">{{ t.id }}</td>
+                    <td class="dim">{{ t.date }}</td>
+                    <td class="strong">{{ t.customer }}</td>
+                    <td class="dim desc">{{ t.description }}</td>
+                    <td class="mono amount">{{ t.amount | number: '1.2-2' }} €</td>
+                    <td><span class="status" [style.color]="statusColor(t.status)">● {{ t.status }}</span></td>
+                    <td class="dim cap">{{ t.category }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
       } @else {
         <div class="table-viewport table-viewport--full">
           <table class="tx-table">
@@ -350,6 +348,27 @@ export class Dashboard implements OnInit {
     'electronics', 'clothing', 'food', 'transport', 'utilities', 'entertainment', 'healthcare', 'other',
   ];
   readonly filters = computed(() => this.store.filters());
+
+  /* ---- Hand-rolled virtual scrolling (signal-driven, zoneless-native) ---- */
+  readonly scrollTop = signal(0);
+  private readonly viewportHeight = 480;
+  private readonly buffer = 4;
+
+  readonly totalHeight = computed(() => this.store.filtered().length * this.rowHeight);
+  readonly windowStart = computed(() =>
+    Math.max(0, Math.floor(this.scrollTop() / this.rowHeight) - this.buffer),
+  );
+  readonly visibleRows = computed(() => {
+    const rows = this.store.filtered();
+    const start = this.windowStart();
+    const count = Math.ceil(this.viewportHeight / this.rowHeight) + this.buffer * 2;
+    return rows.slice(start, start + count);
+  });
+  readonly windowOffset = computed(() => this.windowStart() * this.rowHeight);
+
+  onTableScroll(e: Event): void {
+    this.scrollTop.set((e.target as HTMLElement).scrollTop);
+  }
 
   private readonly palette = PALETTE;
 

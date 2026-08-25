@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DataService } from '../core/data.service';
 import { domNodeCount, formatBytes, formatMs, heapUsed, measureScrollFps, nextPaint } from '../core/benchmark';
 import type { BenchmarkMetric, BenchmarkResult, Transaction } from '../core/models';
@@ -10,7 +9,7 @@ type Step = 'idle' | 'unoptimized' | 'optimized' | 'done';
 @Component({
   selector: 'pl-benchmark',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, DecimalPipe, ScrollingModule],
+  imports: [DatePipe, DecimalPipe],
   template: `
     <div class="page-head">
       <h1>Benchmark</h1>
@@ -81,33 +80,31 @@ type Step = 'idle' | 'unoptimized' | 'optimized' | 'done';
           </div>
         }
         @if (showOptimized()) {
-          <cdk-virtual-scroll-viewport
-            #optViewport
-            class="viewport"
-            [itemSize]="rowHeight"
-            [maxBufferPx]="200"
-            [minBufferPx]="100"
-          >
-            <table class="tx-table">
-              <thead class="tx-head">
-                <tr>
-                  <th>ID</th><th>Date</th><th>Customer</th><th>Description</th>
-                  <th>Amount</th><th>Status</th><th>Category</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *cdkVirtualFor="let t of benchData(); track t.id" [style.height.px]="rowHeight">
-                  <td class="mono">{{ t.id }}</td>
-                  <td class="dim">{{ t.date }}</td>
-                  <td>{{ t.customer }}</td>
-                  <td class="dim desc">{{ t.description }}</td>
-                  <td class="mono">{{ t.amount | number: '1.2-2' }} €</td>
-                  <td class="dim cap">{{ t.status }}</td>
-                  <td class="dim cap">{{ t.category }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </cdk-virtual-scroll-viewport>
+          <div class="viewport" id="optViewport" (scroll)="onOptScroll($event)">
+            <div [style.height.px]="benchTotalHeight()">
+              <table class="tx-table" [style.margin-top.px]="benchWindowOffset()">
+                <thead class="tx-head">
+                  <tr>
+                    <th>ID</th><th>Date</th><th>Customer</th><th>Description</th>
+                    <th>Amount</th><th>Status</th><th>Category</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (t of benchVisibleRows(); track t.id) {
+                    <tr [style.height.px]="rowHeight">
+                      <td class="mono">{{ t.id }}</td>
+                      <td class="dim">{{ t.date }}</td>
+                      <td>{{ t.customer }}</td>
+                      <td class="dim desc">{{ t.description }}</td>
+                      <td class="mono">{{ t.amount | number: '1.2-2' }} €</td>
+                      <td class="dim cap">{{ t.status }}</td>
+                      <td class="dim cap">{{ t.category }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
         }
       } @else if (result()) {
         <div class="results">
@@ -320,6 +317,27 @@ export class Benchmark {
   readonly result = signal<BenchmarkResult | null>(null);
 
   readonly rowHeight = 44;
+
+  /* ---- hand-rolled virtual scrolling for the optimized phase ---- */
+  readonly benchScrollTop = signal(0);
+  private readonly benchViewportHeight = 352; // 22rem
+  private readonly benchBuffer = 4;
+
+  readonly benchTotalHeight = computed(() => this.benchData().length * this.rowHeight);
+  readonly benchWindowStart = computed(() =>
+    Math.max(0, Math.floor(this.benchScrollTop() / this.rowHeight) - this.benchBuffer),
+  );
+  readonly benchVisibleRows = computed(() => {
+    const rows = this.benchData();
+    const start = this.benchWindowStart();
+    const count = Math.ceil(this.benchViewportHeight / this.rowHeight) + this.benchBuffer * 2;
+    return rows.slice(start, start + count);
+  });
+  readonly benchWindowOffset = computed(() => this.benchWindowStart() * this.rowHeight);
+
+  onOptScroll(e: Event): void {
+    this.benchScrollTop.set((e.target as HTMLElement).scrollTop);
+  }
   private stepLabelMap: Record<string, string> = {
     unoptimized: 'unoptimized (full DOM)',
     optimized: 'optimized (virtual scroll)',
@@ -430,7 +448,7 @@ export class Benchmark {
     await nextPaint();
     const viewport = which === 'unoptimized'
       ? (document.querySelector('.viewport--full') as HTMLElement | null)
-      : (document.querySelector('cdk-virtual-scroll-viewport') as HTMLElement | null);
+      : (document.querySelector('#optViewport') as HTMLElement | null);
 
     let fps = 60;
     if (viewport) {

@@ -31,12 +31,14 @@ Both render the same columns from the same filtered dataset — the difference i
 
 | | Unoptimized | Optimized |
 |---|---|---|
-| Rendering | `@for` over the **entire** filtered array | `*cdkVirtualFor` over a fixed-height viewport |
-| DOM size | O(n) — 10K rows ≈ 80K nodes | O(visible) — a few hundred nodes |
+| Rendering | `@for` over the **entire** filtered array | Signal-driven window: only visible rows (+ buffer) |
+| DOM size | O(n) — 10K rows ≈ 80K nodes | O(visible) — ~20 nodes |
 | Derived state | Template helper methods (`expensiveLabel`, `expensiveSummary`, `expensiveAmount`) recomputed per row per CD cycle | Raw fields; formatting delegated to `DecimalPipe` (pure, memoized per value) |
 | Track strategy | `track $index` (worst case: no DOM reuse on reorder) | `track t.id` (stable identity, DOM reuse) |
 
-The unoptimized version is deliberately *not* a strawman: it is what a straightforward Angular implementation looks like, and the baseline most real dashboards ship with.
+The virtual scrolling is **hand-rolled** (~30 lines): a `scrollTop` signal written by the container's `(scroll)` handler, a `computed` window (`start = floor(scrollTop / rowHeight) − buffer`), a spacer div with the total height, and the table offset by `start × rowHeight`. It is zoneless-native by construction — no dependency on CD scheduling.
+
+> **Why not Angular CDK's `cdkVirtualFor`?** It is the production drop-in and the right choice for real products. During this lab's development it rendered zero items in the zoneless + `@switch`-created subtree (CDK 21.2 / Angular 21.2), silently. Rather than ship a demo whose centerpiece silently fails, the lab implements the concept from first principles — which also makes it readable. The unoptimized version is deliberately *not* a strawman: it is what a straightforward Angular implementation looks like, and the baseline most real dashboards ship with.
 
 ## 3. How measurement works
 

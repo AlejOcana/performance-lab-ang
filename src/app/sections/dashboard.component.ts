@@ -139,8 +139,8 @@ const PALETTE = ['#22d3ee', '#5eead4', '#818cf8', '#f472b6', '#fbbf24', '#4ade80
 
       @if (version() === 'optimized') {
         <div class="table-viewport" (scroll)="onTableScroll($event)">
-          <div [style.height.px]="totalHeight()">
-            <table class="tx-table" [style.margin-top.px]="windowOffset()">
+          <div [style.height.px]="spacerHeight()">
+            <table class="tx-table" [style.margin-top.px]="contentOffset()">
               <thead class="tx-head">
                 <tr>
                   <th>ID</th><th>Date</th><th>Customer</th><th>Description</th>
@@ -301,7 +301,13 @@ const PALETTE = ['#22d3ee', '#5eead4', '#818cf8', '#f472b6', '#fbbf24', '#4ade80
       .input:focus, .select:focus { outline: none; border-color: var(--accent); }
       .filters-count { margin-left: auto; font-size: 0.72rem; color: var(--text-low); }
 
-      .table-viewport { height: 30rem; border: 1px solid var(--line); border-radius: 10px; overflow: auto; }
+      .table-viewport {
+        height: 30rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: auto;
+        overflow-anchor: none;
+      }
       .table-viewport--full { max-height: 30rem; }
       .tx-table { width: 100%; border-collapse: collapse; }
       .tx-head th {
@@ -349,22 +355,31 @@ export class Dashboard implements OnInit {
   ];
   readonly filters = computed(() => this.store.filters());
 
-  /* ---- Hand-rolled virtual scrolling (signal-driven, zoneless-native) ---- */
+  /* ---- Hand-rolled virtual scrolling (signal-driven, zoneless-native) ----
+     The spacer height is capped and the window maps proportionally, so the
+     scrollbar thumb stays grabbable even with 50K rows (a 440K px track would
+     make it sub-pixel). */
   readonly scrollTop = signal(0);
   private readonly viewportHeight = 480;
   private readonly buffer = 4;
+  private readonly spacerCap = 20000;
 
   readonly totalHeight = computed(() => this.store.filtered().length * this.rowHeight);
-  readonly windowStart = computed(() =>
-    Math.max(0, Math.floor(this.scrollTop() / this.rowHeight) - this.buffer),
-  );
+  readonly spacerHeight = computed(() => Math.min(this.totalHeight(), this.spacerCap));
+  readonly progress = computed(() => {
+    const max = this.spacerHeight() - this.viewportHeight;
+    return max > 0 ? Math.min(this.scrollTop() / max, 1) : 0;
+  });
   readonly visibleRows = computed(() => {
     const rows = this.store.filtered();
-    const start = this.windowStart();
-    const count = Math.ceil(this.viewportHeight / this.rowHeight) + this.buffer * 2;
-    return rows.slice(start, start + count);
+    const visibleCount = Math.ceil(this.viewportHeight / this.rowHeight);
+    const maxStart = Math.max(rows.length - visibleCount, 0);
+    const start = Math.round(this.progress() * maxStart);
+    return rows.slice(start, start + visibleCount + this.buffer);
   });
-  readonly windowOffset = computed(() => this.windowStart() * this.rowHeight);
+  readonly contentOffset = computed(() =>
+    this.progress() * Math.max(this.totalHeight() - this.viewportHeight, 0),
+  );
 
   onTableScroll(e: Event): void {
     this.scrollTop.set((e.target as HTMLElement).scrollTop);

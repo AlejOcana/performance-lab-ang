@@ -81,8 +81,8 @@ type Step = 'idle' | 'unoptimized' | 'optimized' | 'done';
         }
         @if (showOptimized()) {
           <div class="viewport" id="optViewport" (scroll)="onOptScroll($event)">
-            <div [style.height.px]="benchTotalHeight()">
-              <table class="tx-table" [style.margin-top.px]="benchWindowOffset()">
+            <div [style.height.px]="benchSpacerHeight()">
+              <table class="tx-table" [style.margin-top.px]="benchContentOffset()">
                 <thead class="tx-head">
                   <tr>
                     <th>ID</th><th>Date</th><th>Customer</th><th>Description</th>
@@ -241,7 +241,7 @@ type Step = 'idle' | 'unoptimized' | 'optimized' | 'done';
         color: var(--accent);
         margin-bottom: 0.8rem;
       }
-      .viewport { height: 22rem; border: 1px solid var(--line); border-radius: 10px; overflow: auto; }
+      .viewport { height: 22rem; border: 1px solid var(--line); border-radius: 10px; overflow: auto; overflow-anchor: none; }
       .viewport--full { max-height: 22rem; }
       .tx-table { width: 100%; border-collapse: collapse; }
       .tx-head th {
@@ -318,22 +318,31 @@ export class Benchmark {
 
   readonly rowHeight = 44;
 
-  /* ---- hand-rolled virtual scrolling for the optimized phase ---- */
+  /* ---- hand-rolled virtual scrolling for the optimized phase ----
+     Spacer capped + proportional window mapping (grabbable scrollbar). */
   readonly benchScrollTop = signal(0);
   private readonly benchViewportHeight = 352; // 22rem
   private readonly benchBuffer = 4;
+  private readonly benchSpacerCap = 12000;
 
-  readonly benchTotalHeight = computed(() => this.benchData().length * this.rowHeight);
-  readonly benchWindowStart = computed(() =>
-    Math.max(0, Math.floor(this.benchScrollTop() / this.rowHeight) - this.benchBuffer),
+  readonly benchSpacerHeight = computed(() =>
+    Math.min(this.benchData().length * this.rowHeight, this.benchSpacerCap),
   );
+  readonly benchProgress = computed(() => {
+    const max = this.benchSpacerHeight() - this.benchViewportHeight;
+    return max > 0 ? Math.min(this.benchScrollTop() / max, 1) : 0;
+  });
   readonly benchVisibleRows = computed(() => {
     const rows = this.benchData();
-    const start = this.benchWindowStart();
-    const count = Math.ceil(this.benchViewportHeight / this.rowHeight) + this.benchBuffer * 2;
-    return rows.slice(start, start + count);
+    const visibleCount = Math.ceil(this.benchViewportHeight / this.rowHeight);
+    const maxStart = Math.max(rows.length - visibleCount, 0);
+    const start = Math.round(this.benchProgress() * maxStart);
+    return rows.slice(start, start + visibleCount + this.benchBuffer);
   });
-  readonly benchWindowOffset = computed(() => this.benchWindowStart() * this.rowHeight);
+  readonly benchContentOffset = computed(() => {
+    const total = this.benchData().length * this.rowHeight;
+    return this.benchProgress() * Math.max(total - this.benchViewportHeight, 0);
+  });
 
   onOptScroll(e: Event): void {
     this.benchScrollTop.set((e.target as HTMLElement).scrollTop);

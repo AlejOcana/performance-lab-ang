@@ -30,6 +30,7 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --radius: 14px;
   --row-height: 44px;
+  --topbar-bg: rgba(10, 14, 19, 0.82);
 }
 
 :root[data-theme='light'] {
@@ -53,6 +54,7 @@
   --ok: #16a34a;
   --warn: #d97706;
   --danger: #dc2626;
+  --topbar-bg: rgba(255, 255, 255, 0.92);
 }
 
 /* ============ Reset & base ============ */

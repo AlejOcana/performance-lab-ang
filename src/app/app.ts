@@ -83,13 +83,10 @@ type View = 'benchmark' | 'dashboard' | 'techniques';
         position: sticky;
         top: 0;
         z-index: 50;
-        background: var(--topbar-bg, rgba(10, 14, 19, 0.82));
+        background: var(--topbar-bg);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
         border-bottom: 1px solid var(--line);
-      }
-      :root[data-theme='light'] .topbar {
-        background: rgba(255, 255, 255, 0.92);
         box-shadow:
           0 1px 0 var(--line),
           0 6px 20px -10px rgba(15, 23, 42, 0.12);

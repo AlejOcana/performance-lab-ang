@@ -1,0 +1,29 @@
+ INFO  Accepting connections at http://localhost:4175
+ HTTP  25/8/2026 9:35:31 ::1 GET /
+ HTTP  25/8/2026 9:35:31 ::1 Returned 200 in 48 ms
+ HTTP  25/8/2026 9:37:25 ::1 GET /
+ HTTP  25/8/2026 9:37:25 ::1 Returned 200 in 2 ms
+ HTTP  25/8/2026 9:37:25 ::1 GET /main-KVQOAIGB.js
+ HTTP  25/8/2026 9:37:25 ::1 GET /styles-FIBAMVXB.css
+ HTTP  25/8/2026 9:37:25 ::1 Returned 200 in 4 ms
+ HTTP  25/8/2026 9:37:25 ::1 Returned 200 in 55 ms
+ HTTP  25/8/2026 9:37:25 ::1 GET /favicon.svg
+ HTTP  25/8/2026 9:37:25 ::1 Returned 404 in 1 ms
+ HTTP  25/8/2026 9:40:19 ::1 GET /
+ HTTP  25/8/2026 9:40:19 ::1 Returned 304 in 0 ms
+ HTTP  25/8/2026 9:40:19 ::1 GET /main-KVQOAIGB.js
+ HTTP  25/8/2026 9:40:19 ::1 Returned 304 in 0 ms
+ HTTP  25/8/2026 9:40:19 ::1 GET /styles-FIBAMVXB.css
+ HTTP  25/8/2026 9:40:19 ::1 Returned 304 in 0 ms
+ HTTP  25/8/2026 9:52:11 ::1 GET /
+ HTTP  25/8/2026 9:52:11 ::1 Returned 200 in 2 ms
+ HTTP  25/8/2026 9:52:11 ::1 GET /main-SETLDJMJ.js
+ HTTP  25/8/2026 9:52:11 ::1 Returned 200 in 1 ms
+ HTTP  25/8/2026 9:52:11 ::1 GET /styles-FIBAMVXB.css
+ HTTP  25/8/2026 9:52:11 ::1 Returned 304 in 1 ms
+ HTTP  25/8/2026 10:10:56 ::1 GET /
+ HTTP  25/8/2026 10:10:56 ::1 Returned 200 in 1 ms
+ HTTP  25/8/2026 10:10:56 ::1 GET /main-R37PNC4H.js
+ HTTP  25/8/2026 10:10:56 ::1 Returned 200 in 1 ms
+ HTTP  25/8/2026 10:10:56 ::1 GET /styles-FIBAMVXB.css
+ HTTP  25/8/2026 10:10:56 ::1 Returned 304 in 2 ms

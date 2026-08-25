@@ -1,12 +1,12 @@
 ﻿[33m>[39m Building...
 [32mÔêÜ[39m Building...
 [1mInitial chunk files[22m[2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
-[32mmain-R37PNC4H.js[39m   [2m | [22m[2mmain[22m         [2m | [22m[36m177.43 kB[39m[2m | [22m               [36m51.44 kB[39m
-[32mstyles-FIBAMVXB.css[39m[2m | [22m[2mstyles[22m       [2m | [22m  [36m2.14 kB[39m[2m | [22m              [36m853 bytes[39m
+[32mmain-TJVULL3R.js[39m   [2m | [22m[2mmain[22m         [2m | [22m[36m177.31 kB[39m[2m | [22m               [36m51.41 kB[39m
+[32mstyles-E2ULY24L.css[39m[2m | [22m[2mstyles[22m       [2m | [22m  [36m2.21 kB[39m[2m | [22m              [36m872 bytes[39m
 
-[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m179.57 kB[22m[2m | [22m               [1m52.30 kB[22m
+[1m [22m                  [2m | [22m[1mInitial total[22m[2m | [22m[1m179.53 kB[22m[2m | [22m               [1m52.28 kB[22m
 
-Application bundle generation complete. [1.443 seconds] - 2026-08-25T08:25:16.488Z
+Application bundle generation complete. [1.605 seconds] - 2026-08-25T08:39:46.224Z
 
 Output location: F:\Development\OpenCode\performance-lab\dist\performance-lab
 

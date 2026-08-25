@@ -339,10 +339,7 @@ export class Benchmark {
     const start = Math.round(this.benchProgress() * maxStart);
     return rows.slice(start, start + visibleCount + this.benchBuffer);
   });
-  readonly benchContentOffset = computed(() => {
-    const total = this.benchData().length * this.rowHeight;
-    return this.benchProgress() * Math.max(total - this.benchViewportHeight, 0);
-  });
+  readonly benchContentOffset = computed(() => this.benchScrollTop());
 
   onOptScroll(e: Event): void {
     this.benchScrollTop.set((e.target as HTMLElement).scrollTop);

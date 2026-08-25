@@ -377,9 +377,8 @@ export class Dashboard implements OnInit {
     const start = Math.round(this.progress() * maxStart);
     return rows.slice(start, start + visibleCount + this.buffer);
   });
-  readonly contentOffset = computed(() =>
-    this.progress() * Math.max(this.totalHeight() - this.viewportHeight, 0),
-  );
+  /** The rendered chunk is positioned at the current scroll offset so it is always in view. */
+  readonly contentOffset = computed(() => this.scrollTop());
 
   onTableScroll(e: Event): void {
     this.scrollTop.set((e.target as HTMLElement).scrollTop);

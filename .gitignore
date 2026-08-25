@@ -44,3 +44,6 @@ __screenshots__/
 Thumbs.db
 
 serve-log.txt
+
+e2e-log.txt
+test-results/

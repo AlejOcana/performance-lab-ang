@@ -140,7 +140,15 @@ const PALETTE = ['#22d3ee', '#5eead4', '#818cf8', '#f472b6', '#fbbf24', '#4ade80
       @if (version() === 'optimized') {
         <div class="table-viewport" (scroll)="onTableScroll($event)">
           <div [style.height.px]="spacerHeight()">
-            <table class="tx-table" [style.margin-top.px]="contentOffset()">
+            <table
+              class="tx-table tx-table--fixed"
+              [style.transform]="'translateY(' + contentOffset() + 'px)'"
+            >
+              <colgroup>
+                <col style="width: 11%" /><col style="width: 10%" /><col style="width: 16%" />
+                <col style="width: 27%" /><col style="width: 12%" /><col style="width: 12%" />
+                <col style="width: 12%" />
+              </colgroup>
               <thead class="tx-head">
                 <tr>
                   <th>ID</th><th>Date</th><th>Customer</th><th>Description</th>
@@ -165,7 +173,12 @@ const PALETTE = ['#22d3ee', '#5eead4', '#818cf8', '#f472b6', '#fbbf24', '#4ade80
         </div>
       } @else {
         <div class="table-viewport table-viewport--full">
-          <table class="tx-table">
+          <table class="tx-table tx-table--fixed">
+            <colgroup>
+              <col style="width: 11%" /><col style="width: 10%" /><col style="width: 16%" />
+              <col style="width: 27%" /><col style="width: 12%" /><col style="width: 12%" />
+              <col style="width: 12%" />
+            </colgroup>
             <thead class="tx-head">
               <tr>
                 <th>ID</th><th>Date</th><th>Customer</th><th>Description</th>
@@ -309,7 +322,7 @@ const PALETTE = ['#22d3ee', '#5eead4', '#818cf8', '#f472b6', '#fbbf24', '#4ade80
         overflow-anchor: none;
       }
       .table-viewport--full { max-height: 30rem; }
-      .tx-table { width: 100%; border-collapse: collapse; }
+      .tx-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
       .tx-head th {
         position: sticky;
         top: 0;

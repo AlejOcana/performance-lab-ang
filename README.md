@@ -48,6 +48,7 @@ Every optimization applied in the lab, each with the real code from this reposit
 pnpm install
 pnpm start        # dev server at http://localhost:4200
 pnpm test         # unit tests (Vitest)
+pnpm test:e2e     # end-to-end tests (Playwright): virtual scroll, filters, benchmark, theme
 pnpm build        # production build
 ```
 
@@ -77,7 +78,14 @@ src/app/
 
 ## Testing
 
-Unit tests (Vitest) cover the deterministic core: the seeded generator (shape, validity, determinism) and the formatting helpers.
+- **Unit (Vitest, 9 tests)** — the deterministic core: seeded generator (shape, validity, determinism) and formatting helpers.
+- **E2E (Playwright, 9 specs)** — the guarantees that matter for this lab, verified on every change:
+  - the optimized table renders a *window* of rows (never the full 10K dataset)
+  - scrolling moves the window and rows stay **inside the viewport** (the bug this test exists for)
+  - column positions stay stable while scrolling (`table-layout: fixed`)
+  - search filters reduce results; the unoptimized version renders too
+  - a benchmark run produces the four measured metrics and discloses its methodology
+  - theme toggle switches and persists across reloads
 
 ## License
 

@@ -82,7 +82,15 @@ type Step = 'idle' | 'unoptimized' | 'optimized' | 'done';
         @if (showOptimized()) {
           <div class="viewport" id="optViewport" (scroll)="onOptScroll($event)">
             <div [style.height.px]="benchSpacerHeight()">
-              <table class="tx-table" [style.margin-top.px]="benchContentOffset()">
+              <table
+                class="tx-table tx-table--fixed"
+                [style.transform]="'translateY(' + benchContentOffset() + 'px)'"
+              >
+                <colgroup>
+                  <col style="width: 12%" /><col style="width: 11%" /><col style="width: 18%" />
+                  <col style="width: 27%" /><col style="width: 12%" /><col style="width: 10%" />
+                  <col style="width: 10%" />
+                </colgroup>
                 <thead class="tx-head">
                   <tr>
                     <th>ID</th><th>Date</th><th>Customer</th><th>Description</th>
@@ -243,7 +251,7 @@ type Step = 'idle' | 'unoptimized' | 'optimized' | 'done';
       }
       .viewport { height: 22rem; border: 1px solid var(--line); border-radius: 10px; overflow: auto; overflow-anchor: none; }
       .viewport--full { max-height: 22rem; }
-      .tx-table { width: 100%; border-collapse: collapse; }
+      .tx-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
       .tx-head th {
         position: sticky; top: 0; z-index: 1;
         background: var(--bg-2);
